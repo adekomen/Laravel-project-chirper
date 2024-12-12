@@ -13,6 +13,7 @@ class ChirpTest extends TestCase
     /**
      * A basic feature test example.
      */
+    // Exercice 1
     public function test_un_utilisateur_peut_creer_un_chirp()
     {
         // Simuler un utilisateur connecté
@@ -29,7 +30,7 @@ class ChirpTest extends TestCase
             'user_id' => $utilisateur->id,
         ]);
     }
-
+    // Exercice 2
     public function test_un_chirp_ne_peut_pas_avoir_un_contenu_vide()
     {
         $utilisateur = User::factory()->create();
@@ -54,6 +55,7 @@ class ChirpTest extends TestCase
         $response->assertSessionHasErrors(['message']);
     }
 
+    // Exercice 3
     // public function test_les_chirps_sont_affiches_sur_la_page_d_accueil()
     // {
     //     $chirps = Chirp::factory()->count(3)->create();
@@ -65,6 +67,7 @@ class ChirpTest extends TestCase
     //     }
     // }
 
+    // Exercice 4
     public function test_un_utilisateur_peut_modifier_son_chirp()
     {
         $utilisateur = User::factory()->create();
@@ -84,6 +87,7 @@ class ChirpTest extends TestCase
         ]);
     }
 
+    // Exercie 5
     public function test_un_utilisateur_peut_supprimer_son_chirp()
     {
         $utilisateur = User::factory()->create();
@@ -100,6 +104,7 @@ class ChirpTest extends TestCase
         ]);
     }
 
+    // Exercice 6
     public function test_un_utilisateur_ne_peut_pas_modifier_ou_supprimer_le_chirp_d_un_autre_utilisateur()
     {
         $user1 = User::factory()->create();
@@ -115,6 +120,35 @@ class ChirpTest extends TestCase
 
         $responseDelete = $this->delete("/chirps/{$chirp->id}");
         $responseDelete->assertStatus(403);
+    }
+
+    // Exercice 7
+    public function test_un_chirp_mis_a_jour_ne_peut_pas_avoir_un_contenu_vide()
+    {
+        $utilisateur = User::factory()->create();
+        $chirp = Chirp::factory()->create(['user_id' => $utilisateur->id]);
+
+        $this->actingAs($utilisateur);
+
+        $response = $this->put("/chirps/{$chirp->id}", [
+            'message' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['message']);
+    }
+
+    public function test_un_chirp_mis_a_jour_ne_peut_pas_depasse_255_caracteres()
+    {
+        $utilisateur = User::factory()->create();
+        $chirp = Chirp::factory()->create(['user_id' => $utilisateur->id]);
+
+        $this->actingAs($utilisateur);
+
+        $response = $this->put("/chirps/{$chirp->id}", [
+            'message' => str_repeat('a', 256),
+        ]);
+
+        $response->assertSessionHasErrors(['message']);
     }
 
 }
