@@ -29,4 +29,19 @@ class ChirpTest extends TestCase
         ]);
     }
 
+    public function test_un_chirp_ne_peut_pas_avoir_un_contenu_vide()
+    {
+        $utilisateur = User::factory()->create();
+        $this->actingAs($utilisateur);
+
+        $response = $this->post('/chirps', [
+            'message' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['message']);
+    }
+
+    
+
+
 }
