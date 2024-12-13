@@ -166,4 +166,18 @@ class ChirpTest extends TestCase
         $response->assertStatus(302);
     }
 
+    // Exercice 9
+    public function test_afficher_seulement_les_chirps_recents()
+    {
+        $recentChirp = Chirp::factory()->create(['created_at' => now()]);
+        $oldChirp = Chirp::factory()->create(['created_at' => now()->subDays(8)]);
+
+        $response = $this->get('/');
+
+        $response->assertSee($recentChirp->content);
+        $response->assertDontSee($oldChirp->content);
+    }
+
+    // Exercice 10
+
 }
