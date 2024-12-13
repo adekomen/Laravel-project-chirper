@@ -55,12 +55,12 @@ class ChirpTest extends TestCase
         $response->assertSessionHasErrors(['message']);
     }
 
-    // Exercice 3
+    //Exercice 3
     // public function test_les_chirps_sont_affiches_sur_la_page_d_accueil()
     // {
     //     $chirps = Chirp::factory()->count(3)->create();
 
-    //     $response = $this->get('/');
+    //     $response = $this->get('/chirps');
 
     //     foreach ($chirps as $chirp) {
     //         $response->assertSee($chirp->contenu);
@@ -149,6 +149,21 @@ class ChirpTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['message']);
+    }
+
+    // Exercie 8
+    public function test_un_utilisateur_ne_peut_pas_avoir_plus_de_10_chirps()
+    {
+        $utilisateur = User::factory()->create();
+        Chirp::factory()->count(10)->create(['user_id' => $utilisateur->id]);
+
+        $this->actingAs($utilisateur);
+
+        $response = $this->post('/chirps', [
+            'message' => '11ᵉ chirp',
+        ]);
+
+        $response->assertStatus(302);
     }
 
 }
