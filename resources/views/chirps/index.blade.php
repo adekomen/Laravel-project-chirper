@@ -57,6 +57,23 @@
                             @endif
                         </div>
                         <p class="mt-4 text-lg text-gray-900">{{ $chirp->message }}</p>
+
+                        <div class="flex items-center space-x-4">
+                            @php
+                                $liked = $chirp->likes()->where('user_id', auth()->id())->exists();
+                            @endphp
+
+                            <form action="{{ $liked ? route('chirps.unlike', $chirp) : route('chirps.like', $chirp) }}" method="POST">
+                                @csrf
+                                <button 
+                                    type="submit" 
+                                    class="flex items-center {{ $liked ? 'text-blue-600 hover:text-blue-800' : 'text-gray-600 hover:text-gray-800' }}"
+                                >
+                                    👍 <span class="ml-1">{{ $chirp->likes()->count() }}</span>
+                                </button>
+                            </form>
+                        </div>
+
                     </div>
                 </div>
             @endforeach

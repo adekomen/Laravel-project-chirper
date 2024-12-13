@@ -37,7 +37,7 @@ class ChirpController extends Controller
         if ($request->user()->chirps()->count() > 10) {
             return redirect('/chirps')->with('error', 'Vous avez atteint la limite de 10 chirps.');
         }
-        
+
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ]);
@@ -95,4 +95,27 @@ class ChirpController extends Controller
  
         return redirect(route('chirps.index'));
     }
+
+    public function like(Chirp $chirp, Request $request)
+    {
+        $user = $request->user();
+
+        if ($chirp->likes()->where('user_id', $user->id)->exists()) {
+            return redirect()->back()->withErrors(['error' => 'Vous avez déjà liké ce chirp.']);
+        }
+
+        $chirp->likes()->attach($user);
+
+        return redirect()->back()->with('success', 'Chirp liké avec succès !');
+    }
+
+    public function unlike(Chirp $chirp, Request $request)
+    {
+        $user = $request->user();
+
+        $chirp->likes()->detach($user);
+
+        return redirect()->back()->with('success', 'Like retiré avec succès !');
+    }
+
 }

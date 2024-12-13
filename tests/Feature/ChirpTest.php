@@ -179,5 +179,33 @@ class ChirpTest extends TestCase
     }
 
     // Exercice 10
+    public function test_un_utilisateur_peut_liker_un_chirp()
+    {
+        $utilisateur = User::factory()->create();
+        $chirp = Chirp::factory()->create();
+
+        $this->actingAs($utilisateur);
+
+        $response = $this->post("/chirps/{$chirp->id}/like");
+
+        $response->assertStatus(302);
+        $this->assertDatabaseHas('chirp_likes', [
+            'user_id' => $utilisateur->id,
+            'chirp_id' => $chirp->id,
+        ]);
+    }
+
+    public function test_un_utilisateur_ne_peut_pas_liker_deux_fois_un_chirp()
+    {
+        $utilisateur = User::factory()->create();
+        $chirp = Chirp::factory()->create();
+
+        $this->actingAs($utilisateur);
+
+        $this->post("/chirps/{$chirp->id}/like");
+        $response = $this->post("/chirps/{$chirp->id}/like");
+
+        $response->assertStatus(302);
+    }
 
 }
